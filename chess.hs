@@ -28,8 +28,6 @@ module Chess where
     data PColor = White | Black deriving(Show)
     data PType = Pawn | Knight | Bishop | Rook | Queen | King deriving(Show)
     
-    
-    
     showSquare :: Square->Char
     showSquare = maybe ' ' showPiece
     
@@ -65,33 +63,55 @@ module Chess where
     readPiece 'R' = Just (Piece White Rook)
     readPiece 'Q' = Just (Piece White Queen)
     readPiece 'K' = Just (Piece White King) 
-    readPiece 'p' = Just (Piece White Pawn) 
-    readPiece 'n' = Just (Piece White Knight)
-    readPiece 'b' = Just (Piece White Bishop)
-    readPiece 'r' = Just (Piece White Rook)
-    readPiece 'q' = Just (Piece White Queen)
-    readPiece 'k' = Just (Piece White King) 
+    readPiece 'p' = Just (Piece Black Pawn) 
+    readPiece 'n' = Just (Piece Black Knight)
+    readPiece 'b' = Just (Piece Black Bishop)
+    readPiece 'r' = Just (Piece Black Rook)
+    readPiece 'q' = Just (Piece Black Queen)
+    readPiece 'k' = Just (Piece Black King) 
     readPiece _ = Nothing
-    
-    type Move = String 
-    
-    makeMove :: String -> String
-    makeMove = undefined
-    
+        
+    flattenBoard :: [[Square]] -> [Square]
+    flattenBoard [] = []
+    flattenBoard (x:xs) = x++(flattenBoard xs)
+
+    group :: Int -> [a] -> [[a]]
+    group _ [] = []
+    group n l = (take n l) : (group n (drop n l))
+
+    groupToBoard :: [Square]->[[Square]]
+    groupToBoard = group 8
+
     calculateMove :: String -> String
     calculateMove = undefined
     
-    --changeBoard :: Square -> Int -> Board -> Board
+    addSquare :: Square -> Int -> [Square] -> [Square]
+    addSquare sq 0 (xs) = sq:tail xs
+    addSquare sq i (x:xs) = x:addSquare sq (i-1) xs  
 
+    getSquare :: Int ->[Square]-> Square
+    getSquare 0 (x:xs) = x
+    getSquare i (x:xs) = getSquare (i-1) (xs) 
 
-    changeRow :: Square->Int->[Square]->[Square]
-    changeRow sq 0 xs = sq: tail xs 
-    changeRow sq i (x:xs) = x:changeRow sq (i-1) xs
+    makeMove :: Int -> Int ->[Square]-> [Square]
+    makeMove x y b=do
+        addSquare Nothing x $ addSquare (getSquare x b) y b
+
+    calculateIndex :: Char->Char-> Int
+    calculateIndex x y = (ord x - ord 'A') + abs(ord y - ord '8')*8
 
     main :: IO ()
     main = do 
         writeFile "Board.txt" initialBoardStr
         
-    calculateIndex :: String -> Int
-    calculateIndex (x:y:xs) = ord x - ord 'A' + ord y - ord '0'
+    play :: Either Bool Board->Either Bool Board
+    play (Left a) = (Left a)
     
+    
+    x = readBoard initialBoardStr
+    y = flattenBoard x
+    z = (Piece White Queen)
+    z1 = Just z
+    d = addSquare z1 12 y 
+    e = groupToBoard d
+            
