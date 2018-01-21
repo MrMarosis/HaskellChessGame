@@ -116,14 +116,22 @@ module Chess where
     d = addSquare z1 12 y 
     e = groupToBoard d
 
+    data Player = AI | Human
 
-    validateMove :: Int->Int->[Square]->Bool
+    validateMove :: Player->Int->Int->[Square]->Bool
     validateMove x y b = undefined
     
+    valiadateKingCheck :: Player->[Square]->Bool
     valiadateKingCheck = undefined
-    validateMoveKing :: Int->Int->[Square]->Bool
-    validateMoveRook :: Int->Int->[Square]->Bool
-    validateMoveKnight :: Int->Int->[Square]->Bool
-    validateMoveBishop :: Int->Int->[Square]->Bool
-    validateMoveQueen :: Int->Int->[Square]->Bool
-    validateMovePawn :: Boolean->Int->Int->[Square]->Bool
+    validateMoveKing :: Player->Int->Int->[Square]->Bool
+    validateMoveKing = undefined
+    validateMoveRook :: Player->Int->Int->[Square]->Bool
+    validateMoveRook = undefined 
+    validateMoveKnight :: Player->Int->Int->[Square]->Bool
+    validateMoveKnight = undefined
+    validateMoveBishop :: Player->Int->Int->[Square]->Bool
+    validateMoveBishop = undefined
+    validateMoveQueen :: Player->Int->Int->[Square]->Bool
+    validateMoveQueen = undefined    
+    validateMovePawn :: Player->Int->Int->[Square]->Bool
+    
