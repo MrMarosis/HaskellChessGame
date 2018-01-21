@@ -134,4 +134,5 @@ module Chess where
     validateMoveQueen :: Player->Int->Int->[Square]->Bool
     validateMoveQueen = undefined    
     validateMovePawn :: Player->Int->Int->[Square]->Bool
+    validateMovePawn = undefined
     
