@@ -1,7 +1,18 @@
-module Chess where
-    import Data.Char
-    --import ChessBoard
-
+module ChessBoard(
+    Board,
+    Square,
+    Piece,
+    PColor,
+    PType,
+    initialBoardStr,
+    readBoard,
+    showBoard,
+    showSquare,
+    readSquare,
+    showPiece,
+    readPiece,
+    typeList
+)where
     type Board = [[Square]]
     
     initialBoardStr::String
@@ -71,59 +82,4 @@ module Chess where
     readPiece 'q' = Just (Piece Black Queen)
     readPiece 'k' = Just (Piece Black King) 
     readPiece _ = Nothing
-        
-    flattenBoard :: [[Square]] -> [Square]
-    flattenBoard [] = []
-    flattenBoard (x:xs) = x++(flattenBoard xs)
-
-    group :: Int -> [a] -> [[a]]
-    group _ [] = []
-    group n l = (take n l) : (group n (drop n l))
-
-    groupToBoard :: [Square]->[[Square]]
-    groupToBoard = group 8
-
-    calculateMove :: String -> String
-    calculateMove = undefined
     
-    addSquare :: Square -> Int -> [Square] -> [Square]
-    addSquare sq 0 (xs) = sq:tail xs
-    addSquare sq i (x:xs) = x:addSquare sq (i-1) xs  
-
-    getSquare :: Int ->[Square]-> Square
-    getSquare 0 (x:xs) = x
-    getSquare i (x:xs) = getSquare (i-1) (xs) 
-
-    makeMove :: Int -> Int ->[Square]-> [Square]
-    makeMove x y b=do
-        addSquare Nothing x $ addSquare (getSquare x b) y b
-
-    calculateIndex :: Char->Char-> Int
-    calculateIndex x y = (ord x - ord 'A') + abs(ord y - ord '8')*8
-
-    main :: IO ()
-    main = do 
-        writeFile "Board.txt" initialBoardStr
-        
-    play :: Either Bool Board->Either Bool Board
-    play (Left a) = (Left a)
-    
-
-    x = readBoard initialBoardStr
-    y = flattenBoard x
-    z = (Piece White Queen)
-    z1 = Just z
-    d = addSquare z1 12 y 
-    e = groupToBoard d
-
-
-    validateMove :: Int->Int->[Square]->Bool
-    validateMove x y b = undefined
-    
-    valiadateKingCheck = undefined
-    validateMoveKing :: Int->Int->[Square]->Bool
-    validateMoveRook :: Int->Int->[Square]->Bool
-    validateMoveKnight :: Int->Int->[Square]->Bool
-    validateMoveBishop :: Int->Int->[Square]->Bool
-    validateMoveQueen :: Int->Int->[Square]->Bool
-    validateMovePawn :: Boolean->Int->Int->[Square]->Bool
