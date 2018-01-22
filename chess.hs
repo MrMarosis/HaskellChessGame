@@ -106,7 +106,7 @@ module Chess where
         writeFile "Board.txt" initialBoardStr
         
     play :: Either Bool Board->Either Bool Board
-    play (Left a) = (Left a)
+    play (Left a) = (Left a) 
     
 
     x = readBoard initialBoardStr
@@ -121,10 +121,55 @@ module Chess where
     validateMove :: Player->Int->Int->[Square]->Bool
     validateMove x y b = undefined
     
+    checkBoardMoveKing :: Int->Int->Bool
+    --w pierwszym kroku sprawdzam zmianę w zakresie kolumn
+    checkBoardMoveKing x y = if abs((mod x 8) - (mod y 8)) > 1 then
+                                False
+                                else 
+                                    if abs((div x 8) - (div y 8)) > 1 then
+                                        False
+                                    else
+                                        True
+    checkBoardMoveKnight :: Int->Int->Bool
+    checkBoardMoveKnight x y = if abs((div x 8) - (div y 8)) == 2
+                                    && abs((mod x 8) - (mod y 8)) == 1 then True
+                                else 
+                                    if abs((div x 8) - (div y 8)) == 1
+                                        && abs((mod x 8) - (mod y 8)) == 2 then True
+                                    else False   
+
+    --checkBoardMoveRook :: Int->Int->Bool
+    --checkBoardMoveRook x y = $left x : $right x: $up x: $down x
+    --                        where left x  = \x-> if getSquare x-1
+
+    isKing::Square->Bool
+    isKing (Just (Piece _ King))=True
+    isKing _ = False
+
+    getColor::Square->PColor
+    getColor (Just (Piece White _)) = White
+    getColor (Just (Piece Black _)) = Black
+
+    rookLeft :: PColor->Int->[Square]->Int
+    rookLeft c x b = if getSquare (x-1) b == Nothing then 
+                            if x>0 then 
+                                rookLeft c (x-1) b
+                            else 
+                                x
+                    else
+                        if (getSquare (x-1) b) == Just Piece( c _ ) then 
+                            x
+                        else
+                            if isKing 
+                                getSquare (x-1) b == just (Piece White King) then x
+                                else rookLeft (x-1) b 
+
     valiadateKingCheck :: Player->[Square]->Bool
     valiadateKingCheck = undefined --
     validateMoveKing :: Player->Int->Int->[Square]->Bool
-    validateMoveKing = undefined --currindex -9,-8,-7,+1,+7,+8,+9
+    validateMoveKing p x y sx = undefined
+
+
     validateMoveRook :: Player->Int->Int->[Square]->Bool
     validateMoveRook = undefined -- [i/8,i/8+1,...,i/8+7][i%8,i%8+1,..,i%8+7] Trochę inaczej
 
