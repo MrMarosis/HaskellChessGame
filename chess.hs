@@ -122,17 +122,19 @@ module Chess where
     validateMove x y b = undefined
     
     valiadateKingCheck :: Player->[Square]->Bool
-    valiadateKingCheck = undefined
+    valiadateKingCheck = undefined --
     validateMoveKing :: Player->Int->Int->[Square]->Bool
-    validateMoveKing = undefined
+    validateMoveKing = undefined --currindex -9,-8,-7,+1,+7,+8,+9
     validateMoveRook :: Player->Int->Int->[Square]->Bool
-    validateMoveRook = undefined 
+    validateMoveRook = undefined -- [i/8,i/8+1,...,i/8+7][i%8,i%8+1,..,i%8+7] Trochę inaczej
+
     validateMoveKnight :: Player->Int->Int->[Square]->Bool
-    validateMoveKnight = undefined
+    validateMoveKnight = undefined --(+) currIndex -17,-14,-10,-6,+6,+10,+14,+17
     validateMoveBishop :: Player->Int->Int->[Square]->Bool
-    validateMoveBishop = undefined
+    validateMoveBishop = undefined -- (+) currIndex [-63-54,...,+54+63] ,[...]
     validateMoveQueen :: Player->Int->Int->[Square]->Bool
-    validateMoveQueen = undefined    
-    validateMovePawn :: Player->Int->Int->[Square]->Bool
+    validateMoveQueen p x y b = validateMoveRook p x y b  && validateMoveBishop p x y b
+    validateMovePawn :: Player->Int->Int->[Square]->Bool --(+) currindex [+1, i/8+8+-1] 
     validateMovePawn = undefined
+    
     
