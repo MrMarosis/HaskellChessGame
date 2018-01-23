@@ -26,7 +26,7 @@ module Chess where
     type Square = Maybe Piece
     
     data Piece = Piece PColor PType deriving(Show)
-    data PColor = White | Black deriving(Show)
+    data PColor = White | Black deriving(Show,Eq)
     data PType = Pawn | Knight | Bishop | Rook | Queen | King deriving(Show)
     
     showSquare :: Square->Char
@@ -150,19 +150,25 @@ module Chess where
     getColor (Just (Piece White _)) = White
     getColor (Just (Piece Black _)) = Black
 
+    isPeace::Square->Bool
+    isPeace (Nothing) = False
+    isPeace (Just (Piece _ _)) = True
+
     rookLeft :: PColor->Int->[Square]->Int
-    rookLeft c x b = if getSquare (x-1) b == Nothing then 
-                            if x>0 then 
+    rookLeft c x b = if  isPeace ( getSquare (x-1) b) then 
+                            if div x 8>0 then 
                                 rookLeft c (x-1) b
                             else 
                                 x
                     else
-                        if (getSquare (x-1) b) == Just Piece( c _ ) then 
+                        if (getColor  $ getSquare (x-1) b) == c then 
                             x
                         else
-                            if isKing 
-                                getSquare (x-1) b == just (Piece White King) then x
-                                else rookLeft (x-1) b 
+                            if isKing $ getSquare (x-1) b then 
+                                 x
+                            else rookLeft c (x-1) b 
+
+
 
     valiadateKingCheck :: Player->[Square]->Bool
     valiadateKingCheck = undefined --
