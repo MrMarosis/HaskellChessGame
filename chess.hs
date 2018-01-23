@@ -160,7 +160,7 @@ module Chess where
     --rook right dx=1 f=mod x 8 limit = 7
     --rook down dx=9 f = div x 8 limit = 7
     --rook up dx=-9 f = dix x 8 limit=0
-    
+    -- np w l dół z pola 23 białą wieżą: rookDirection White 23 y 8 (\x y-> mod x y) 0
 
     rookDirection :: PColor->Int->[Square]->Int->(Int->Int->Int)->Int->[Int]                        
     rookDirection c x b dx f limit= if (f x 8)==limit then 
@@ -177,22 +177,70 @@ module Chess where
                                 else
                                    [x+dx]
 
+    --bishop down left dx = 7 lim1 = 7 lim2 = 0
+    --bishop down right dx = 9 lim1 = 7 lim2 = 7
+    --bishop up right dx = -7 lim1 = 0 lim2 = 7
+    --bishop up left dx = -9 lim1 = 0 lim2 = 0
 
-    bishopUpRight :: PColor->Int->[Square]->Int
-    bishopUpRight c x b= if div x 8==7 || mod x 8 ==7 then
+    bishopDirection :: PColor->Int->[Square]->Int->Int->Int->[Int]
+    bishopDirection c x b dx lim1 lim2 = if div x 8==lim1 || mod x 8 ==lim2 then
+                                        [x]
+                                    else
+                                        if not $ isPeace ( getSquare (x+dx) b) then 
+                                            [x]++bishopDirection c (x+dx) b dx lim1 lim2
+                                    else
+                                    if isKing $ getSquare (x+dx) b then 
+                                        [x]
+                                    else 
+                                        if (getColor  $ getSquare (x+dx) b) == c then 
+                                            [x]
+                                    else
+                                       [x+dx]
+
+    bishopDownLeft :: PColor->Int->[Square]->Int
+    bishopDownLeft c x b= if div x 8==0 || mod x 8 ==0 then
                             x
                         else
-                            if not $ isPeace ( getSquare (x+9) b) then 
-                                bishopUpRight c (x+9) b
+                            if not $ isPeace ( getSquare (x+7) b) then 
+                                bishopDownLeft c (x+7) b
                             else
-                                if isKing $ getSquare (x+9) b then 
+                                if isKing $ getSquare (x+7) b then 
                                     x
                                else 
-                                   if (getColor  $ getSquare (x+9) b) == c then 
-                                       x
+                                   if (getColor  $ getSquare (x+7) b) == c then 
+                                        x
                                    else
                                       x+9
 
+    bishopUpLeft :: PColor->Int->[Square]->Int
+    bishopUpLeft c x b= if div x 8==0 || mod x 8 ==0 then
+                            x
+                        else
+                            if not $ isPeace ( getSquare (x-9) b) then 
+                                bishopUpLeft c (x-9) b
+                            else
+                                if isKing $ getSquare (x-9) b then 
+                                    x
+                               else 
+                                   if (getColor  $ getSquare (x-9) b) == c then 
+                                       x
+                                   else
+                                      x-9
+
+    bishopUpRight :: PColor->Int->[Square]->Int
+    bishopUpRight c x b= if div x 8==0 || mod x 8 ==7 then
+                            x
+                        else
+                            if not $ isPeace ( getSquare (x-7) b) then 
+                                bishopUpRight c (x-7) b
+                            else
+                                if isKing $ getSquare (x-7) b then 
+                                    x
+                               else 
+                                   if (getColor  $ getSquare (x-7) b) == c then 
+                                       x
+                                   else
+                                      x-7
             
 
 
