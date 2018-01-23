@@ -156,69 +156,27 @@ module Chess where
     isPeace (Nothing) = False
     isPeace (Just (Piece _ _)) = True
 
-    --rook left dx=-1 f = mod x limit = 8
-    --rook right dx=1 mod x 8
+    --rook left dx=-1 f = mod x 8 limit = 0
+    --rook right dx=1 f=mod x 8 limit = 7
+    --rook down dx=9 f = div x 8 limit = 7
+    --rook up dx=-9 f = dix x 8 limit=0
     
 
-    rookDirection :: PColor->Int->[Square]->Int->(Int->Int->Int)->Int->Int                        
-    rookDirection c x b dx f limit= if f x limit==0 then 
-                        x
+    rookDirection :: PColor->Int->[Square]->Int->(Int->Int->Int)->Int->[Int]                        
+    rookDirection c x b dx f limit= if (f x 8)==limit then 
+                        [x]
                     else
                         if not $ isPeace ( getSquare (x+dx) b) then 
-                            rookDirection c (x+dx) b dx f limit
+                            [x]++rookDirection c (x+dx) b dx f limit
                         else
                             if isKing $ getSquare (x+dx) b then 
-                                 x
+                                 [x]
                             else 
                                 if (getColor  $ getSquare (x+dx) b) == c then 
-                                    x
+                                    [x]
                                 else
-                                   x+dx
+                                   [x+dx]
 
-    rookRight :: PColor->Int->[Square]->Int                        
-    rookRight c x b = if mod x 8==7 then 
-                        x
-                    else
-                        if not $ isPeace ( getSquare (x+1) b) then 
-                            rookRight c (x+1) b
-                        else
-                            if isKing $ getSquare (x+1) b then 
-                                 x
-                            else 
-                                if (getColor  $ getSquare (x+1) b) == c then 
-                                    x
-                                else
-                                   x+1
-
-    rookUp :: PColor->Int->[Square]->Int                        
-    rookUp c x b = if div x 8==0 then 
-                        x
-                    else
-                        if not $ isPeace ( getSquare (x-8) b) then 
-                            rookUp c (x-8) b
-                        else
-                            if isKing $ getSquare (x-8) b then 
-                                 x
-                            else 
-                                if (getColor  $ getSquare (x-8) b) == c then 
-                                    x
-                                else
-                                   x-8
-
-    rookDown :: PColor->Int->[Square]->Int                        
-    rookDown c x b = if div x 8==7 then 
-                        x
-                    else
-                        if not $ isPeace ( getSquare (x+8) b) then 
-                            rookDown c (x+8) b
-                        else
-                            if isKing $ getSquare (x+8) b then 
-                                 x
-                            else 
-                                if (getColor  $ getSquare (x+8) b) == c then 
-                                    x
-                                else
-                                   x+8
 
     bishopUpRight :: PColor->Int->[Square]->Int
     bishopUpRight c x b= if div x 8==7 || mod x 8 ==7 then
