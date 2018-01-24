@@ -132,6 +132,8 @@ module Chess where
     -- \x t -> [x+dx|dx<-t,(isKingOrFriend c x+dx b)==False]
     
     -- \x tab -> [x+dx|dx<-tab,(isColorOrKing dx b)==false]
+    kingDirection :: PColor->Int->[Square]->[Int]
+    kingDirection c x b= filter (isNotKingOrFriend c b)  (map (validate c x ) tab)
         where 
             tab =[-9, -8, -7, -1, 0, 1, 7, 8, 9]
             validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
@@ -166,6 +168,7 @@ module Chess where
 -}
 -}  --filter (isNotKingOrFriend c b)
     knightDirection :: PColor->Int->[Square]->[Int]
+    knightDirection c x b =  (map (validate c x) tab)
                                 where 
                                     tab = [-17,-15, -10,-6, 6,10, 15,17]
                                     validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
@@ -199,8 +202,11 @@ module Chess where
     isKing _ = False
 
     isKingOrFriend:: PColor->Int->[Square]->Bool
+    isKingOrFriend c x b= if not $ isPeace $ getSquare x b then False
             else
+                if isKing $ getSquare x b  then True
                 else 
+                    if c == ( getColor $ getSquare x b ) then True
                     else False
     
     isNotKingOrFriend:: PColor->[Square]->Int->Bool
@@ -236,7 +242,10 @@ module Chess where
                         if not $ isPeace ( getSquare (x+dx) b) then 
                             [x]++rookDirection c (x+dx) b dx f limit
                         else
+                            if isKingOrFriend  c (x+dx) b  then 
                                  [x]
+                            else
+                                [x,x+dx]
 
     --bishop down left dx = 7 lim1 = 7 lim2 = 0
     --bishop down right dx = 9 lim1 = 7 lim2 = 7
@@ -257,7 +266,10 @@ module Chess where
                                         if not $ isPeace ( getSquare (x+dx) b) then 
                                             [x]++bishopDirection c (x+dx) b dx lim1 lim2
                                     else
+                                        if isKingOrFriend  c (x+dx) b  then 
                                             [x]
+                                        else
+                                        [x,x+dx]
 
     bishopDownLeft :: PColor->Int->[Square]->Int
     bishopDownLeft c x b= if div x 8==0 || mod x 8 ==0 then
