@@ -177,22 +177,16 @@ module Chess where
 
     --knightDirection = commonDirection c x  [-17,-15, -10,-6, 6,10, 15,17]
 
-<<<<<<< HEAD
     pawnDirection :: PColor->Int->[Square]->[Int]
     pawnDirection c x b = if c== White then
                                 (validateforwardW (x-8) b)++(validateslantW (x-7) b)++(validateslantW (x-9) b)
                             else
                                 (validateforwardW (x+8) b)++(validateslantW (x+7) b)++(validateslantW (x+9) b)
                                 where 
-                                    validateforwardW x b = if x>=0 && (getSquare x b) /= Nothing then [x] else []
-                                    validateslantW x b = if x<0 && (isKingOrFriend c x b)  then [x] else []
-                                    validateforwardB x b = if x<=65 && (getSquare x b) /= Nothing then [x] else []
-                                    validateslantB x b = if x<65 && (isKingOrFriend c x b)  then [x] else []
-=======
-    --pawnDirection :: PColor->Int->[Square]->[Int]
-    --pawnDirection c x b = if c==White and || div x 8 == 1 [x+8]
-
->>>>>>> 039f0f05f52ce2d0aa304bfa9c0c395e6ef5364e
+                                    validateforwardW x b = if x>=0 && isPeace (getSquare x b) == False then [x] else []
+                                    validateslantW x b = if x>=0 && (isKingOrFriend c x b)==False && isPeace (getSquare x b) then [x] else []
+                                    validateforwardB x b = if x<=65 && isPeace (getSquare x b) == False then [x] else []
+                                    validateslantB x b = if x<65 && (isKingOrFriend c x b)==False && isPeace (getSquare x b) == False then [x] else []
 
     isKing::Square->Bool
     isKing (Just (Piece _ King))=True
