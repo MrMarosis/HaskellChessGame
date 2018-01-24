@@ -126,8 +126,6 @@ module Chess where
 
 
 
-    
-    
     --filter (\x2 x3  isKingOrFriend c x2 x3)  (map (validate c x ) tab) b
     -- \x t -> [x+dx|dx<-t,(isKingOrFriend c x+dx b)==False]
     
@@ -165,7 +163,6 @@ module Chess where
                                                         x+dx
                                             else
                                                 x
--}
 -}  --filter (isNotKingOrFriend c b)
     knightDirection :: PColor->Int->[Square]->[Int]
     knightDirection c x b =  (map (validate c x) tab)
