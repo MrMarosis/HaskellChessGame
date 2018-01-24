@@ -150,27 +150,32 @@ module Chess where
                                             x
 
     pawnDirection :: PColor->Int->[Square]->[Int]
-    pawnDirection c x b = if c== White then
-                                (validateforwardW (x-8) b)++(validateslantW (x-7) b)++(validateslantW (x-9) b)
-                            else
-                                (validateforwardW (x+8) b)++(validateslantW (x+7) b)++(validateslantW (x+9) b)
+    pawnDirection c x b = if c==White then
+                                (validateforwardW (x-8) b)++(validateslantW x (-7) b)++(validateslantW x (-9) b)
+                            else if c==Black then
+                                (validateforwardB (x+8) b)++(validateslantB x 7 b)++(validateslantB x 9 b)
+                                else if (getColor $ getSquare x b)==White then [x+j|j<-[-7,-9], diff x j]
+                                    else [x+j|j<-[7,9], diff x j]
                                 where 
                                     validateforwardW x b = if x>=0 && isPeace (getSquare x b) == False then [x] else []
-                                    validateslantW x b = if x>=0 && (isKingOrFriend c x b)==False && isPeace (getSquare x b) then [x] else []
+                                    validateslantW x y b = if x>=0 && False==(isKingOrFriend c (x+y) b) && isPeace (getSquare (x+y) b)
+                                        && diff x y then [x+y] else []
                                     validateforwardB x b = if x<=65 && isPeace (getSquare x b) == False then [x] else []
-                                    validateslantB x b = if x<65 && (isKingOrFriend c x b)==False && isPeace (getSquare x b) == False then [x] else []
-
+                                    validateslantB x y b = if x<65 && False==(isKingOrFriend c (x+y) b) && isPeace (getSquare (x+y) b) 
+                                        && diff x y then [x+y] else []
+                                    diff x y = abs((mod x 8) - (mod (x+y) 8))==1
     isKing::Square->Bool
     isKing (Just (Piece _ King))=True
     isKing _ = False
 
     isKingOrFriend:: PColor->Int->[Square]->Bool
-    isKingOrFriend c x b= if not $ isPeace $ getSquare x b then False
-            else
-                if isKing $ getSquare x b  then True
-                else 
-                    if c == ( getColor $ getSquare x b ) then True
-                    else False
+    isKingOrFriend c x b= if (getColor $ getSquare x b) == Check then False else
+                                    if not $ isPeace $ getSquare x b then False
+                                    else
+                                        if isKing $ getSquare x b  then True
+                                        else 
+                                            if c == ( getColor $ getSquare x b ) then True
+                                            else False
     
     isNotKingOrFriend:: PColor->[Square]->Int->Bool
     isNotKingOrFriend c b x= not $ isKingOrFriend c x b
@@ -255,11 +260,6 @@ module Chess where
     --isCheck :: int->->Color->[Square]->Bool
     --isCheck x c b = x inList list
      --               where 
-
-    --instance Eq (Maybe (Piece PColor PType)) where
-    --    (==) (Just (Piece c1 t1)) (Just (Piece c2 t2)) = c1==c1 && t1==t2
-    --    (/=) _ _ = False
-
 
     --
     possibleMovesForFigure:: Maybe Piece->Int->[Square]-> [Int]
