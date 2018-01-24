@@ -210,8 +210,8 @@ module Chess where
     rookMoves :: PColor->Int->[Square]->[Int]
     rookMoves c x b =  rookDirection c x b (-1) (\x y-> mod x y) 0 ++ 
                         rookDirection c x b (1) (\x y-> mod x y) 7 ++
-                        rookDirection c x b (9) (\x y-> mod x y) 7 ++
-                        rookDirection c x b (-9) (\x y-> mod x y) 0 ++
+                        rookDirection c x b (8) (\x y-> mod x y) 7 ++
+                        rookDirection c x b (-8) (\x y-> mod x y) 0 ++
                         []
                     
 
@@ -225,7 +225,7 @@ module Chess where
                             if isKingOrFriend  c (x+dx) b then 
                                  [x]
                             else
-                                [x+dx]
+                                [x,x+dx]
 
     --bishop down left dx = 7 lim1 = 7 lim2 = 0
     --bishop down right dx = 9 lim1 = 7 lim2 = 7
