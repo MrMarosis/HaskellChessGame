@@ -176,8 +176,8 @@ module Chess where
 
     --knightDirection = commonDirection c x  [-17,-15, -10,-6, 6,10, 15,17]
 
-    pawnDirection :: PColor->Int->[Square]->[Int]
-    pawnDirection c x b = if c==White and || div x 8 == 1 [x+8]
+    --pawnDirection :: PColor->Int->[Square]->[Int]
+    --pawnDirection c x b = if c==White and || div x 8 == 1 [x+8]
 
 
     isKing::Square->Bool
@@ -206,6 +206,14 @@ module Chess where
     --rook down dx=9 f = div x 8 limit = 7
     --rook up dx=-9 f = dix x 8 limit=0
     -- np w l dół z pola 23 białą wieżą: rookDirection White 23 y 8 (\x y-> mod x y) 0
+    
+    rookMoves :: PColor->Int->[Square]->[Int]
+    rookMoves c x b =  rookDirection c x b (-1) (\x y-> mod x y) 0 ++ 
+                        rookDirection c x b (1) (\x y-> mod x y) 7 ++
+                        rookDirection c x b (9) (\x y-> mod x y) 7 ++
+                        rookDirection c x b (-9) (\x y-> mod x y) 0 ++
+                        []
+                    
 
     rookDirection :: PColor->Int->[Square]->Int->(Int->Int->Int)->Int->[Int]                        
     rookDirection c x b dx f limit= if (f x 8)==limit then 
@@ -214,13 +222,10 @@ module Chess where
                         if not $ isPeace ( getSquare (x+dx) b) then 
                             [x]++rookDirection c (x+dx) b dx f limit
                         else
-                            if isKing $ getSquare (x+dx) b then 
+                            if isKingOrFriend  c (x+dx) b then 
                                  [x]
-                            else 
-                                if (getColor  $ getSquare (x+dx) b) == c then 
-                                    [x]
-                                else
-                                   [x+dx]
+                            else
+                                [x+dx]
 
     --bishop down left dx = 7 lim1 = 7 lim2 = 0
     --bishop down right dx = 9 lim1 = 7 lim2 = 7
