@@ -121,8 +121,17 @@ module Chess where
     validateMove :: Player->Int->Int->[Square]->Bool
     validateMove x y b = undefined
     
+
+    
+
+
+
+    
+    
+    
+    -- \x tab -> [x+dx|dx<-tab,(isColorOrKing dx b)==false]
     kingDirection :: PColor->Int->[Int]
-    kingDirection c x = map (validate c x ) tab
+    kingDirection c x =  map (validate c x ) tab
         where 
             tab = [-9, -8, -7, -1, 0, 1, 7, 8, 9]
             validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
@@ -154,17 +163,22 @@ module Chess where
                                             else
                                                 x
 -}
-    checkBoardMoveKnight :: Int->Int->Bool
-    checkBoardMoveKnight x y = if abs((div x 8) - (div y 8)) == 2
-                                    && abs((mod x 8) - (mod y 8)) == 1 then True
-                                else 
-                                    if abs((div x 8) - (div y 8)) == 1
-                                        && abs((mod x 8) - (mod y 8)) == 2 then True
-                                    else False   
+    knightDirection :: PColor->Int->[Square]->[Int]
+    knightDirection c x b =  map (validate c x) tab
+                                where 
+                                    tab = [-17,-15, -10,-6, 6,10, 15,17]
+                                    validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
+                                    else 
+                                        if x+y > -1 && x+y<66 then
+                                            x+y
+                                        else
+                                            x
 
-    --checkBoardMoveRook :: Int->Int->Bool
-    --checkBoardMoveRook x y = $left x : $right x: $up x: $down x
-    --                        where left x  = \x-> if getSquare x-1
+    --knightDirection = commonDirection c x  [-17,-15, -10,-6, 6,10, 15,17]
+
+    pawnDirection :: PColor->Int->[Square]->[Int]
+    pawnDirection c x b = if c==White and || div x 8 == 1 [x+8]
+
 
     isKing::Square->Bool
     isKing (Just (Piece _ King))=True
