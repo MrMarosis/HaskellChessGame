@@ -128,10 +128,10 @@ module Chess where
 
     
     
+    --filter (\x2 x3  isKingOrFriend c x2 x3)  (map (validate c x ) tab) b
+    -- \x t -> [x+dx|dx<-t,(isKingOrFriend c x+dx b)==False]
     
     -- \x tab -> [x+dx|dx<-tab,(isColorOrKing dx b)==false]
-    kingDirection :: PColor->Int->[Int]
-    kingDirection c x =  map (validate c x ) tab
         where 
             tab =[-9, -8, -7, -1, 0, 1, 7, 8, 9]
             validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
@@ -140,6 +140,7 @@ module Chess where
                                                 x+y
                                             else
                                                 x
+            
 
     
     --w pierwszym kroku sprawdzam zmianę w zakresie kolumn
@@ -163,8 +164,8 @@ module Chess where
                                             else
                                                 x
 -}
+-}  --filter (isNotKingOrFriend c b)
     knightDirection :: PColor->Int->[Square]->[Int]
-    knightDirection c x b =  map (validate c x) tab
                                 where 
                                     tab = [-17,-15, -10,-6, 6,10, 15,17]
                                     validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
@@ -176,6 +177,7 @@ module Chess where
 
     --knightDirection = commonDirection c x  [-17,-15, -10,-6, 6,10, 15,17]
 
+<<<<<<< HEAD
     pawnDirection :: PColor->Int->[Square]->[Int]
     pawnDirection c x b = if c== White then
                                 (validateforwardW (x-8) b)++(validateslantW (x-7) b)++(validateslantW (x-9) b)
@@ -186,18 +188,23 @@ module Chess where
                                     validateslantW x b = if x<0 && (isKingOrFriend c x b)  then [x] else []
                                     validateforwardB x b = if x<=65 && (getSquare x b) /= Nothing then [x] else []
                                     validateslantB x b = if x<65 && (isKingOrFriend c x b)  then [x] else []
+=======
+    --pawnDirection :: PColor->Int->[Square]->[Int]
+    --pawnDirection c x b = if c==White and || div x 8 == 1 [x+8]
+
+>>>>>>> 039f0f05f52ce2d0aa304bfa9c0c395e6ef5364e
 
     isKing::Square->Bool
     isKing (Just (Piece _ King))=True
     isKing _ = False
 
     isKingOrFriend:: PColor->Int->[Square]->Bool
-    isKingOrFriend c x s= if not $ isPeace $ getSquare x s then False
             else
-                if isKing $ getSquare x s  then True
                 else 
-                    if c == ( getColor $ getSquare x s ) then True
                     else False
+    
+    isNotKingOrFriend:: PColor->[Square]->Int->Bool
+    isNotKingOrFriend c b x= not $ isKingOrFriend c x b
 
     getColor::Square->PColor
     getColor (Just (Piece White _)) = White
@@ -213,6 +220,14 @@ module Chess where
     --rook down dx=9 f = div x 8 limit = 7
     --rook up dx=-9 f = dix x 8 limit=0
     -- np w l dół z pola 23 białą wieżą: rookDirection White 23 y 8 (\x y-> mod x y) 0
+    
+    rookMoves :: PColor->Int->[Square]->[Int]
+    rookMoves c x b =   rookDirection c x b (-1) (\x y-> mod x y) 0 ++ 
+                        rookDirection c x b (1) (\x y-> mod x y) 7 ++
+                        rookDirection c x b (8) (\x y-> mod x y) 7 ++
+                        rookDirection c x b (-8) (\x y-> mod x y) 0 ++
+                        []
+                    
 
     rookDirection :: PColor->Int->[Square]->Int->(Int->Int->Int)->Int->[Int]                        
     rookDirection c x b dx f limit= if (f x 8)==limit then 
@@ -221,18 +236,19 @@ module Chess where
                         if not $ isPeace ( getSquare (x+dx) b) then 
                             [x]++rookDirection c (x+dx) b dx f limit
                         else
-                            if isKing $ getSquare (x+dx) b then 
                                  [x]
-                            else 
-                                if (getColor  $ getSquare (x+dx) b) == c then 
-                                    [x]
-                                else
-                                   [x+dx]
 
     --bishop down left dx = 7 lim1 = 7 lim2 = 0
     --bishop down right dx = 9 lim1 = 7 lim2 = 7
     --bishop up right dx = -7 lim1 = 0 lim2 = 7
     --bishop up left dx = -9 lim1 = 0 lim2 = 0
+    
+    bishopMoves :: PColor->Int->[Square]->[Int]
+    bishopMoves c x b = bishopDirection c x b 7 7 0 ++ 
+                        bishopDirection c x b 9 7 7 ++
+                        bishopDirection c x b (-7) 0 7 ++
+                        bishopDirection c x b (-9) 0 0 ++
+                        []
 
     bishopDirection :: PColor->Int->[Square]->Int->Int->Int->[Int]
     bishopDirection c x b dx lim1 lim2 = if div x 8==lim1 || mod x 8 ==lim2 then
@@ -241,13 +257,7 @@ module Chess where
                                         if not $ isPeace ( getSquare (x+dx) b) then 
                                             [x]++bishopDirection c (x+dx) b dx lim1 lim2
                                     else
-                                    if isKing $ getSquare (x+dx) b then 
-                                        [x]
-                                    else 
-                                        if (getColor  $ getSquare (x+dx) b) == c then 
                                             [x]
-                                    else
-                                       [x+dx]
 
     bishopDownLeft :: PColor->Int->[Square]->Int
     bishopDownLeft c x b= if div x 8==0 || mod x 8 ==0 then
@@ -263,7 +273,20 @@ module Chess where
                                         x
                                    else
                                       x+9
+    
+    inList::Int->[Int]->Bool
+    inList x [] = False
+    inList x (y:ys) = if x==y then True
+                        else inList x ys  
+    
+    isRepeating::Int->[Int]->Bool
+    isRepeating x [] = False
+    isRepeating x (y:ys) = if x==y then inList x ys else isRepeating x ys 
 
+    --filter isRepeating
+
+    queenMoves :: PColor->Int->[Square]->[Int]
+    queenMoves c x b = bishopMoves c x b ++ rookMoves c x b
     
     valiadateKingCheck :: Player->[Square]->Bool
     valiadateKingCheck = undefined --
