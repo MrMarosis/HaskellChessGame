@@ -124,7 +124,7 @@ module Chess where
     kingDirection :: PColor->Int->[Int]
     kingDirection c x = map (validate c x ) tab
         where 
-            tab = [-9, -8, -7, -1, 0, 1, 7, 8, 9]
+            tab =[-9, -8, -7, -1, 0, 1, 7, 8, 9]
             validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
                                         else 
                                             if x+y > -1 && x+y<66 then
@@ -170,10 +170,18 @@ module Chess where
     isKing (Just (Piece _ King))=True
     isKing _ = False
 
+    isKingOrFriend:: PColor->Int->[Square]->Bool
+    isKingOrFriend c x s= if not $ isPeace $ getSquare x s then False
+            else
+                if isKing $ getSquare x s  then True
+                else 
+                    if c == ( getColor $ getSquare x s ) then True
+                    else False
+
     getColor::Square->PColor
     getColor (Just (Piece White _)) = White
     getColor (Just (Piece Black _)) = Black
-    getColor    _ = White
+    getColor _ = White
 
     isPeace::Square->Bool
     isPeace (Nothing) = False
