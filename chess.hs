@@ -121,15 +121,6 @@ module Chess where
     validateMove :: Player->Int->Int->[Square]->Bool
     validateMove x y b = undefined
     
-
-    
-
-
-
-    --filter (\x2 x3  isKingOrFriend c x2 x3)  (map (validate c x ) tab) b
-    -- \x t -> [x+dx|dx<-t,(isKingOrFriend c x+dx b)==False]
-    
-    -- \x tab -> [x+dx|dx<-tab,(isColorOrKing dx b)==false]
     kingDirection :: PColor->Int->[Square]->[Int]
     kingDirection c x b= filter (isNotKingOrFriend c b)  (map (validate c x ) tab)
         where 
@@ -146,36 +137,17 @@ module Chess where
     --w pierwszym kroku sprawdzam zmianę w zakresie kolumn
     --[-9,-8,7-1,0,1,7,8,9]
 
-{-
-    kingDirection :: PColor->Int->[Square]->[Int]
-    kingDirection c x b= map (validate c x b) tab
-        where 
-            tab = [-9, -8, -7, -1, 0, 1, 7, 8, 9]
-            validate c x b dx = if abs((mod x 8) - (mod (x+dx) 8)) > 1 || abs((div x 8) - (div (x+dx) 8)) > 1  then x
-                                        else 
-                                            if x+dx > -1 && x+dx<66 then
-                                                if isKing $ getSquare (x+dx) b then 
-                                                    x
-                                                else 
-                                                    if (getColor $ getSquare (x+dx) b) == c then 
-                                                       x
-                                                    else 
-                                                        x+dx
-                                            else
-                                                x
--}  --filter (isNotKingOrFriend c b)
     knightDirection :: PColor->Int->[Square]->[Int]
-    knightDirection c x b =  (map (validate c x) tab)
+    knightDirection c x b = filter (isNotKingOrFriend c b) (map (validate c x) tab)
                                 where 
                                     tab = [-17,-15, -10,-6, 6,10, 15,17]
-                                    validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
-                                    else 
-                                        if x+y > -1 && x+y<66 then
-                                            x+y
+                                    validate c x y = if x+y > -1 && x+y<66 then 
+                                        if (abs((mod x 8) - (mod (x+y) 8)) == 1 && abs((div x 8) - (div (x+y) 8)) == 2) 
+                                        || (abs((mod x 8) - (mod (x+y) 8)) == 2 && abs((div x 8) - (div (x+y) 8)) == 1) then x+y
+                                            else 
+                                                x
                                         else
                                             x
-
-    --knightDirection = commonDirection c x  [-17,-15, -10,-6, 6,10, 15,17]
 
     pawnDirection :: PColor->Int->[Square]->[Int]
     pawnDirection c x b = if c== White then
@@ -290,23 +262,5 @@ module Chess where
 
     queenMoves :: PColor->Int->[Square]->[Int]
     queenMoves c x b = bishopMoves c x b ++ rookMoves c x b
-    
-    valiadateKingCheck :: Player->[Square]->Bool
-    valiadateKingCheck = undefined --
-    validateMoveKing :: Player->Int->Int->[Square]->Bool
-    validateMoveKing p x y sx = undefined
-
-
-    validateMoveRook :: Player->Int->Int->[Square]->Bool
-    validateMoveRook = undefined -- [i/8,i/8+1,...,i/8+7][i%8,i%8+1,..,i%8+7] Trochę inaczej
-
-    validateMoveKnight :: Player->Int->Int->[Square]->Bool
-    validateMoveKnight = undefined --(+) currIndex -17,-14,-10,-6,+6,+10,+14,+17
-    validateMoveBishop :: Player->Int->Int->[Square]->Bool
-    validateMoveBishop = undefined -- (+) currIndex [-63-54,...,+54+63] ,[...]
-    validateMoveQueen :: Player->Int->Int->[Square]->Bool
-    validateMoveQueen p x y b = validateMoveRook p x y b  && validateMoveBishop p x y b
-    validateMovePawn :: Player->Int->Int->[Square]->Bool --(+) currindex [+1, i/8+8+-1] 
-    validateMovePawn = undefined
     
     
