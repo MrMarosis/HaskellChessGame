@@ -26,7 +26,7 @@ module Chess where
     type Square = Maybe Piece
     
     data Piece = Piece PColor PType deriving(Show)
-    data PColor = White | Black deriving(Show,Eq)
+    data PColor = White | Black | Check deriving(Show,Eq)
     data PType = Pawn | Knight | Bishop | Rook | Queen | King deriving(Show)
     
     showSquare :: Square->Char
@@ -178,7 +178,7 @@ module Chess where
     getColor::Square->PColor
     getColor (Just (Piece White _)) = White
     getColor (Just (Piece Black _)) = Black
-    getColor _ = White
+    getColor _ = Check
 
     isPeace::Square->Bool
     isPeace (Nothing) = False
@@ -234,20 +234,6 @@ module Chess where
                                         else
                                         [x,x+dx]
 
-    bishopDownLeft :: PColor->Int->[Square]->Int
-    bishopDownLeft c x b= if div x 8==0 || mod x 8 ==0 then
-                            x
-                        else
-                            if not $ isPeace ( getSquare (x+7) b) then 
-                                bishopDownLeft c (x+7) b
-                            else
-                                if isKing $ getSquare (x+7) b then 
-                                    x
-                               else 
-                                   if (getColor  $ getSquare (x+7) b) == c then 
-                                        x
-                                   else
-                                      x+9
     
     inList::Int->[Int]->Bool
     inList x [] = False
@@ -264,3 +250,35 @@ module Chess where
     queenMoves c x b = bishopMoves c x b ++ rookMoves c x b
     
     
+
+
+    --isCheck :: int->->Color->[Square]->Bool
+    --isCheck x c b = x inList list
+     --               where 
+
+    --instance Eq (Maybe (Piece PColor PType)) where
+    --    (==) (Just (Piece c1 t1)) (Just (Piece c2 t2)) = c1==c1 && t1==t2
+    --    (/=) _ _ = False
+
+
+    --
+    possibleMovesForFigure:: Maybe Piece->Int->[Square]-> [Int]
+    possibleMovesForFigure Nothing _ _ = []
+    possibleMovesForFigure (Just (Piece c Pawn)) x b = pawnDirection c x b
+    possibleMovesForFigure (Just (Piece c Rook)) x b = rookMoves c x b
+    possibleMovesForFigure (Just (Piece c Knight)) x b = knightDirection c x b
+    possibleMovesForFigure (Just (Piece c Bishop)) x b = bishopMoves c x b
+    possibleMovesForFigure (Just (Piece c Queen)) x b = queenMoves c x b
+    possibleMovesForFigure (Just (Piece c King)) x b = kingDirection c x b
+    
+    rookCheck :: PColor->Int->[Square]->Int->(Int->Int->Int)->Int->[Int]                        
+    rookCheck c x b dx f limit= if (f x 8)==limit then 
+                        [x]
+                    else
+                        if not $ isPeace ( getSquare (x+dx) b) then 
+                            [x]++rookDirection c (x+dx) b dx f limit
+                        else
+                            if isKingOrFriend  c (x+dx) b  then 
+                                 [x]
+                            else
+                                [x,x+dx]
