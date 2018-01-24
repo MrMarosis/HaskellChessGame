@@ -121,16 +121,39 @@ module Chess where
     validateMove :: Player->Int->Int->[Square]->Bool
     validateMove x y b = undefined
     
-    checkBoardMoveKing :: Int->Int->Bool
-    --w pierwszym kroku sprawdzam zmianę w zakresie kolumn
-    checkBoardMoveKing x y = if abs((mod x 8) - (mod y 8)) > 1 then
-                                False
-                                else 
-                                    if abs((div x 8) - (div y 8)) > 1 then
-                                        False
-                                    else
-                                        True
+    kingDirection :: PColor->Int->[Int]
+    kingDirection c x = map (validate c x ) tab
+        where 
+            tab = [-9, -8, -7, -1, 0, 1, 7, 8, 9]
+            validate c x y = if abs((mod x 8) - (mod (x+y) 8)) > 1 || abs((div x 8) - (div (x+y) 8)) > 1  then x
+                                        else 
+                                            if x+y > -1 && x+y<66 then
+                                                x+y
+                                            else
+                                                x
 
+    
+    --w pierwszym kroku sprawdzam zmianę w zakresie kolumn
+    --[-9,-8,7-1,0,1,7,8,9]
+
+{-
+    kingDirection :: PColor->Int->[Square]->[Int]
+    kingDirection c x b= map (validate c x b) tab
+        where 
+            tab = [-9, -8, -7, -1, 0, 1, 7, 8, 9]
+            validate c x b dx = if abs((mod x 8) - (mod (x+dx) 8)) > 1 || abs((div x 8) - (div (x+dx) 8)) > 1  then x
+                                        else 
+                                            if x+dx > -1 && x+dx<66 then
+                                                if isKing $ getSquare (x+dx) b then 
+                                                    x
+                                                else 
+                                                    if (getColor $ getSquare (x+dx) b) == c then 
+                                                       x
+                                                    else 
+                                                        x+dx
+                                            else
+                                                x
+-}
     checkBoardMoveKnight :: Int->Int->Bool
     checkBoardMoveKnight x y = if abs((div x 8) - (div y 8)) == 2
                                     && abs((mod x 8) - (mod y 8)) == 1 then True
@@ -212,39 +235,7 @@ module Chess where
                                    else
                                       x+9
 
-    bishopUpLeft :: PColor->Int->[Square]->Int
-    bishopUpLeft c x b= if div x 8==0 || mod x 8 ==0 then
-                            x
-                        else
-                            if not $ isPeace ( getSquare (x-9) b) then 
-                                bishopUpLeft c (x-9) b
-                            else
-                                if isKing $ getSquare (x-9) b then 
-                                    x
-                               else 
-                                   if (getColor  $ getSquare (x-9) b) == c then 
-                                       x
-                                   else
-                                      x-9
-
-    bishopUpRight :: PColor->Int->[Square]->Int
-    bishopUpRight c x b= if div x 8==0 || mod x 8 ==7 then
-                            x
-                        else
-                            if not $ isPeace ( getSquare (x-7) b) then 
-                                bishopUpRight c (x-7) b
-                            else
-                                if isKing $ getSquare (x-7) b then 
-                                    x
-                               else 
-                                   if (getColor  $ getSquare (x-7) b) == c then 
-                                       x
-                                   else
-                                      x-7
-            
-
-
-
+    
     valiadateKingCheck :: Player->[Square]->Bool
     valiadateKingCheck = undefined --
     validateMoveKing :: Player->Int->Int->[Square]->Bool
