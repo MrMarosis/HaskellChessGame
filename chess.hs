@@ -198,8 +198,8 @@ module Chess where
     rookMoves :: PColor->Int->[Square]->[Int]
     rookMoves c x b =   rookDirection c x b (-1) (\x y-> mod x y) 0 ++ 
                         rookDirection c x b (1) (\x y-> mod x y) 7 ++
-                        rookDirection c x b (8) (\x y-> mod x y) 7 ++
-                        rookDirection c x b (-8) (\x y-> mod x y) 0 ++
+                        rookDirection c x b (8) (\x y-> div x y) 7 ++
+                        rookDirection c x b (-8) (\x y-> div x y) 0 ++
                         []
                     
 
