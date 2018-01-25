@@ -94,9 +94,6 @@ module Chess where
     getSquare 0 (x:xs) = x
     getSquare i (x:xs) = getSquare (i-1) (xs) 
 
-    makeMove :: Int -> Int ->[Square]-> [Square]
-    makeMove x y b=do
-        addSquare Nothing x $ addSquare (getSquare x b) y b
 
     calculateIndex :: Char->Char-> Int
     calculateIndex x y = (ord x - ord 'A') + abs(ord y - ord '8')*8
@@ -110,7 +107,7 @@ module Chess where
     
 
     x = readBoard initialBoardStr
-    y = flattenBoard x
+    y = flattenBoard x 
     z = (Piece White Queen)
     z1 = Just z
     d = addSquare z1 12 y 
@@ -271,6 +268,17 @@ module Chess where
     possibleMovesForFigure (Just (Piece c Queen)) x b = queenMoves c x b
     possibleMovesForFigure (Just (Piece c King)) x b = kingDirection c x b
     
+    checkMove::[Square]->Int->Int->Bool
+    checkMove b s d =  inList d possibleMoves 
+        where possibleMoves = possibleMovesForFigure  (readPiece $ showSquare $  getSquare s b) s b 
+
+    makeMove :: Int -> Int ->[Square]-> [Square]
+    makeMove s d b=
+            if checkMove b s d then 
+                addSquare Nothing s $ addSquare (getSquare s b) d b 
+                else b
+
+
     rookCheck :: PColor->Int->[Square]->Int->(Int->Int->Int)->Int->[Int]                        
     rookCheck c x b dx f limit= if (f x 8)==limit then 
                         [x]
