@@ -1,18 +1,4 @@
-module ChessBoard(
-    Board,
-    Square,
-    Piece,
-    PColor,
-    PType,
-    initialBoardStr,
-    readBoard,
-    showBoard,
-    showSquare,
-    readSquare,
-    showPiece,
-    readPiece,
-    typeList
-)where
+module ChessBoard where
     type Board = [[Square]]
     
     initialBoardStr::String
@@ -37,7 +23,7 @@ module ChessBoard(
     type Square = Maybe Piece
     
     data Piece = Piece PColor PType deriving(Show)
-    data PColor = White | Black deriving(Show)
+    data PColor = White | Black | Check  deriving(Show, Eq)
     data PType = Pawn | Knight | Bishop | Rook | Queen | King deriving(Show)
     
     showSquare :: Square->Char
@@ -82,4 +68,17 @@ module ChessBoard(
     readPiece 'q' = Just (Piece Black Queen)
     readPiece 'k' = Just (Piece Black King) 
     readPiece _ = Nothing
+
+    flattenBoard :: [[Square]] -> [Square]
+    flattenBoard [] = []
+    flattenBoard (x:xs) = x++(flattenBoard xs)
+
+    group :: Int -> [a] -> [[a]]
+    group _ [] = []
+    group n l = (take n l) : (group n (drop n l))
+
+    groupToBoard :: [Square]->[[Square]]
+    groupToBoard = group 8
+
+
     
