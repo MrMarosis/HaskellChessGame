@@ -15,6 +15,18 @@ module Moves where
                                                 x+y
                                             else
                                                 x
+    
+    rookCheck :: PColor->Int->[Square]->Int->(Int->Int->Int)->Int->[Int]                        
+    rookCheck c x b dx f limit= if (f x 8)==limit then 
+                        [x]
+                    else
+                        if not $ isPeace ( getSquare (x+dx) b) then 
+                            [x]++rookDirection c (x+dx) b dx f limit
+                        else
+                            if isKingOrFriend  c (x+dx) b  then 
+                                 [x]
+                            else
+                                [x,x+dx]
             
 
     
@@ -129,5 +141,10 @@ module Moves where
             if checkMove b s d then 
                 addSquare Nothing s $ addSquare (getSquare s b) d b 
                 else b
+    
+    makeMovewithColor::PColor->Int->Int->[Square]->[Square]
+    makeMovewithColor c s d b=
+        if (getColor $ getSquare s b) /= c then b
+            else makeMove s d b
 
 
