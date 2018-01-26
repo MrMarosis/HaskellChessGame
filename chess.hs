@@ -4,19 +4,31 @@ module Chess where
     import BoardState
 
 
-
+    
     
 
 
     play :: IO ()
     play = do 
         putStrLn "enter value of your piece: "
-        s <- getLine
-        let a = calculateIndex (s !! 0)(s !! 1)
+        s1 <- getLine
+        let a = calculateIndex (s1 !! 0)(s1 !! 1)
         putStrLn "enter value for destination: " 
-        d<- getLine
-        let b = calculateIndex (d !! 0)(d !! 1)
-        --makeMove s b (flattenBoard $ readBoard initialBoardStr)
+        d1<- getLine
+        let b = calculateIndex (d1 !! 0)(d1 !! 1)
+        --makeMovewithColor White a b y
+        putStrLn "enter value of your piece: "
+        s2 <- getLine
+        let a = calculateIndex (s2 !! 0)(s2 !! 1)
+        putStrLn "enter value for destination: " 
+        d2<- getLine
+        let b = calculateIndex (d2 !! 0)(d2 !! 1)
+        --makeMovewithColor White a b y
+        print a 
+        print b
+
+
+        -- makeMove s b (flattenBoard $ readBoard initialBoardStr)
         
        
     
