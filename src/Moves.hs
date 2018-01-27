@@ -2,9 +2,6 @@ module Moves where
     import BoardState
     import ChessBoard
     
-    --validateMove :: Player->Int->Int->[Square]->Bool
-    --validateMove x y b = undefined
-    
     kingDirection :: PColor->Int->[Square]->[Int]
     kingDirection c x b= filter (isNotKingOrFriend c b)  (map (validate c x ) tab)
         where 
@@ -116,13 +113,6 @@ module Moves where
     queenMoves c x b = bishopMoves c x b ++ rookMoves c x b
     
     
-
-
-    --isCheck :: int->->Color->[Square]->Bool
-    --isCheck x c b = x inList list
-     --               where 
-
-    --
     possibleMovesForFigure:: Maybe Piece->Int->[Square]-> [Int]
     possibleMovesForFigure Nothing _ _ = []
     possibleMovesForFigure (Just (Piece c Pawn)) x b = pawnDirection c x b
@@ -131,6 +121,15 @@ module Moves where
     possibleMovesForFigure (Just (Piece c Bishop)) x b = bishopMoves c x b
     possibleMovesForFigure (Just (Piece c Queen)) x b = queenMoves c x b
     possibleMovesForFigure (Just (Piece c King)) x b = kingDirection c x b
+
+    possibleChecksForFigure:: Maybe Piece->Int->[Square]-> [Int]
+    possibleChecksForFigure Nothing _ _ = []
+    possibleChecksForFigure (Just (Piece _ Pawn)) x b = pawnDirection Check x b
+    possibleChecksForFigure (Just (Piece _ Rook)) x b = rookMoves Check x b
+    possibleChecksForFigure (Just (Piece _ Knight)) x b = knightDirection Check x b
+    possibleChecksForFigure (Just (Piece _ Bishop)) x b = bishopMoves Check x b
+    possibleChecksForFigure (Just (Piece _ Queen)) x b = queenMoves Check x b
+    possibleChecksForFigure (Just (Piece _ King)) x b = kingDirection Check x b
     
     checkMove::[Square]->Int->Int->Bool
     checkMove b s d =  inList d possibleMoves 
@@ -147,4 +146,34 @@ module Moves where
         if (getColor $ getSquare s b) /= c then b
             else makeMove s d b
 
+    concatMoves:: PColor->[Square]->Int->[Int]
+    concatMoves _ _ 64 = []
+    concatMoves c b x = if  getColor (getSquare x b) == c then
+                (possibleChecksForFigure (getSquare x b) x b)++concatMoves c b (x+1)
+                else 
+                    concatMoves c b (x+1)
 
+    isCheck::PColor->Int->[Square]->Bool
+    isCheck _ 64 _ = False                   
+    isCheck c x b = if (isKing (getSquare x b)) && getColor(getSquare x b) == c then 
+                        if c==Black then 
+                            inList x $ concatMoves White b 0
+                        else 
+                            inList x $ concatMoves Black b 0
+                    else isCheck c (x+1) b
+
+    anyIsNotInList::[Int]->[Int]->Bool
+    anyIsNotInList [] y = False
+    anyIsNotInList (x:xs) (y) = if inList x y 
+                                    then anyIsNotInList xs y 
+                                else
+                                    True
+
+    isMat:: PColor->Int->[Square]->Bool
+    isMat _ 64 _ = False
+    isMat c x b = if (isKing (getSquare x b)) && getColor(getSquare x b) == c then 
+                        if c==Black then 
+                            anyIsNotInList (possibleMovesForFigure (getSquare x b) x b) (concatMoves White b 0)
+                        else 
+                            anyIsNotInList (possibleMovesForFigure (getSquare x b) x b) (concatMoves Black b 0)
+                    else isMat c (x+1) b    

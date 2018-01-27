@@ -3,12 +3,12 @@ module ChessBoard where
     
     initialBoardStr::String
     initialBoardStr = unlines ["rnbqkbnr"
-                                ,"pppppppp"
+                                ,"pppppppp" -- black
                                 ,"        "
                                 ,"        "
                                 ,"        "
                                 ,"        "
-                                ,"PPPPPPPP"
+                                ,"PPPPPPPP" -- white
                                 ,"RNBQKBNR"
                                 ]
     
